@@ -46,7 +46,7 @@ public class FluxTest {
     public void test_flux_range() {
         List<Integer> list = new ArrayList<>();
 
-        Flux<Integer> flux = Flux.range(1,5).log();
+        Flux<Integer> flux = Flux.range(1,5).log(); // range 함수를 이용해 범위 값을 표현할 수도 있다.
 
         flux.subscribe(list::add);
 
@@ -61,7 +61,7 @@ public class FluxTest {
         List<String> names = new ArrayList<>();
 
         Flux<String> flux =
-                Flux.fromArray(new String[]{"xeropise", "xeropise1", "xeropise2"}).log();
+                Flux.fromArray(new String[]{"xeropise", "xeropise1", "xeropise2"}).log(); // fromArray 로 Array 값으로부터 추출도 가능
 
         flux.subscribe(names::add);
 
@@ -74,7 +74,7 @@ public class FluxTest {
         List<String> names = new ArrayList<>();
 
         Flux<String> flux =
-                Flux.fromIterable(Arrays.asList("xeropise", "xeropise1", "xeropise2")).log();
+                Flux.fromIterable(Arrays.asList("xeropise", "xeropise1", "xeropise2")).log(); // fromIterable 로 Iterable 에서도 추출가능
 
         flux.subscribe(names::add);
 
@@ -86,7 +86,7 @@ public class FluxTest {
         List<String> names = new ArrayList<>();
 
         Flux<String> flux =
-                Flux.fromStream(Stream.of("xeropise", "xeropise1", "xeropise2")).log();
+                Flux.fromStream(Stream.of("xeropise", "xeropise1", "xeropise2")).log();  // Stream 형태로도 추출가능
 
         flux.subscribe(names::add);
 
@@ -99,7 +99,7 @@ public class FluxTest {
 
         List<String> names = new ArrayList<>();
 
-        Flux<String> flux = Flux.empty();
+        Flux<String> flux = Flux.empty();  // Flux안에 null 을 넣으면 null 오류가 나므로 empty 라는 빈값 사용 가능
         flux.subscribe(names::add);
 
         Assertions.assertEquals(names.size(),0 );
@@ -129,7 +129,7 @@ public class FluxTest {
     public void test_flux_subscription() {
         Flux<Integer> ints = Flux.range(1, 4);
         ints.subscribe(i -> System.out.println(i),
-                error -> System.err.println("Error " + error),
+                error -> System.err.println("Error " + error),                      // subscribe 메서드에 onSubscribe, onError, onDone, onComplete 를 모두 구현 가능하다.
                 () -> System.out.println("Done"),
                 sub -> {System.out.println("call onNext"); sub.request(Long.MAX_VALUE);}); // onSubscribe
     }
@@ -138,7 +138,7 @@ public class FluxTest {
     public void test_flux_generate() {
         Flux<String> flux = Flux.generate(
                 () -> 0, // (1)
-                (state, sink) -> {
+                (state, sink) -> {          // 여기서 생성되는 sink 는 동기 방식 sink 임
                     sink.next("3 x " + state + " = " + 3*state); // (2)
                     if (state == 10) sink.complete(); // (3)
                     return state + 1; // (4)
@@ -200,7 +200,7 @@ public class FluxTest {
 
     @Test //비동기, pull, 한 개 이상의 next() 발생가능
     public void test_flux_create_pull() {
-        Flux<Integer> flux = Flux.create( (FluxSink<Integer> sink) -> {
+        Flux<Integer> flux = Flux.create( (FluxSink<Integer> sink) -> {        
             sink.onRequest(request -> {
                 for (int i=1; i<= request; i++){
                     sink.next(i);
